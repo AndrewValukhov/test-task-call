@@ -11,11 +11,21 @@ from transformers import WhisperProcessor, WhisperForConditionalGeneration
 
 def pydub_to_np(audio: pydub.AudioSegment) -> (np.ndarray, int):
 
+    """Функция конвертирует объект pydub.AudioSegment в Numpy Array"""
+
     return np.array(audio.get_array_of_samples(), dtype=np.float32).reshape((-1, audio.channels)) / (
             1 << (8 * audio.sample_width - 1)), audio.frame_rate
 
 
 def speed_and_volume(path, speedup=0, volume_increase_db=0):
+
+    """
+    Функция 1: модификация аудио.
+    Принимает на вход:
+        path - путь к аудио,
+        speedup - целое число - процент, на который нужно ускорить или замедлить аудио;
+        volume_increase_db - количество децибел, на которое нужно изменить громкость аудио
+    """
 
     if speedup > 1000:
         speedup = 1000
@@ -46,6 +56,13 @@ def speed_and_volume(path, speedup=0, volume_increase_db=0):
 
 
 def asr(audio_path, model_path="whisper_tiny_downloaded"):
+
+    """
+    Функция 2: Расшифровка аудио в текст
+    Принимает на вход:
+        audio_path - путь к аудиофайлу, который нужно расшифровать,
+        model_path - путь к загруженной на диск модели whisper-tiny
+    """
 
     processor = WhisperProcessor.from_pretrained(model_path)
     model = WhisperForConditionalGeneration.from_pretrained(model_path)
@@ -82,7 +99,7 @@ if __name__ == '__main__':
                         default=0)
     parser.add_argument('--vol_inc_db',
                         type=int,
-                        help='increase /deacrease volume of audio on certain amount of db',
+                        help='increase / deacrease volume of audio on certain amount of db',
                         const=1,
                         nargs='?',
                         default=0)
